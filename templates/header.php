@@ -4,8 +4,10 @@
     $description = isset($metaData['description']) ? $metaData['description'] : 'My Static Site';
 
     function getAsset(string $path) {
+        $isBuilding = getenv('IS_BUILDING');
+
         // TODO: figure out the difference between built and not built assets
-        return "/assets/{$path}";
+        return $isBuilding ? "/{$path}" : "/assets/{$path}";
     }
 ?>
 <!DOCTYPE html>
@@ -25,3 +27,7 @@
     <link rel="stylesheet" href="<?=getAsset('css/main.css')?>" type="text/css">
 </head>
 <body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+    </nav>

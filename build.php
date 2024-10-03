@@ -17,7 +17,7 @@ function compilePages() {
         if ($file->isDir()) {
             $indexPath = $file->getPathname() . DIRECTORY_SEPARATOR . 'index.php';
             if (file_exists($indexPath)) {
-                $output = shell_exec('php ' . $indexPath);
+                $output = shell_exec('IS_BUILDING=true php ' . $indexPath);
                 $relativePath = str_replace($rootDir, '', $file->getPathname());
                 $relativePath = str_replace('/pages', '', $relativePath);
                 $outputFilePath = $distDir . $relativePath . DIRECTORY_SEPARATOR . 'index.html';
