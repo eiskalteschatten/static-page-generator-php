@@ -3,6 +3,27 @@
 $distDir = __DIR__ . DIRECTORY_SEPARATOR . 'public';
 $timestamp = time();
 
+function deleteFolder($folderPath) {
+    if (!is_dir($folderPath)) {
+        return false;
+    }
+
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($folderPath, RecursiveDirectoryIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::CHILD_FIRST
+    );
+
+    foreach ($iterator as $file) {
+        if ($file->isDir()) {
+            rmdir($file->getPathname());
+        } else {
+            unlink($file->getPathname());
+        }
+    }
+
+    return rmdir($folderPath);
+}
+
 function copyAssets() {
     global $distDir, $timestamp;
     $assetsDir = __DIR__ . DIRECTORY_SEPARATOR . 'assets';
@@ -12,15 +33,8 @@ function copyAssets() {
         RecursiveIteratorIterator::SELF_FIRST
     );
 
-    $cssDir = $distDir . DIRECTORY_SEPARATOR . 'css';
-    if (is_dir($cssDir)) {
-        rmdir($cssDir);
-    }
-
-    $jsDir = $distDir . DIRECTORY_SEPARATOR . 'js';
-    if (is_dir($jsDir)) {
-        rmdir($jsDir);
-    }
+    deleteFolder($distDir . DIRECTORY_SEPARATOR . 'css');
+    deleteFolder($distDir . DIRECTORY_SEPARATOR . 'js');
 
     foreach ($iterator as $file) {
         if ($file->isFile()) {
