@@ -14,8 +14,6 @@ foreach ($iterator as $file) {
     if ($file->isDir()) {
         $indexPath = $file->getPathname() . DIRECTORY_SEPARATOR . 'index.php';
         if (file_exists($indexPath)) {
-            echo 'Building ' . $indexPath . PHP_EOL;
-
             ob_start();
             include_once $indexPath;
             $output = ob_get_clean();
@@ -27,6 +25,8 @@ foreach ($iterator as $file) {
             }
 
             file_put_contents($outputFilePath, $output);
+
+            echo $indexPath . ' -> ' . $outputFilePath . PHP_EOL;
         }
     }
 }
