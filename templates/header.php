@@ -1,6 +1,6 @@
 <?php
     $defaultTitle = 'My Static Site';
-    $title = isset($metaData['title']) ? "{$metaData['title']} - ${defaultTitle}" : $defaultTitle;
+    $title = isset($metaData['title']) ? "{$metaData['title']} - {$defaultTitle}" : $defaultTitle;
     $description = isset($metaData['description']) ? $metaData['description'] : 'My Static Site';
 
     function getAsset(string $path) {
