@@ -17,7 +17,7 @@ foreach ($iterator as $file) {
             echo 'Building ' . $indexPath . PHP_EOL;
 
             ob_start();
-            include $indexPath;
+            include_once $indexPath;
             $output = ob_get_clean();
             $relativePath = str_replace($rootDir, '', $file->getPathname());
             $outputFilePath = $distDir . $relativePath . DIRECTORY_SEPARATOR . 'index.html';
