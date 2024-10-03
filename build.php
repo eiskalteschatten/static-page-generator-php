@@ -1,6 +1,6 @@
 <?php
 
-$distDir = __DIR__ . DIRECTORY_SEPARATOR . 'public';
+$publicDir = __DIR__ . DIRECTORY_SEPARATOR . 'public';
 $timestamp = time();
 
 function deleteFolder($folderPath) {
@@ -25,35 +25,43 @@ function deleteFolder($folderPath) {
 }
 
 function copyAssets() {
-    global $distDir, $timestamp;
+    global $publicDir, $timestamp;
     $assetsDir = __DIR__ . DIRECTORY_SEPARATOR . 'assets';
+    $jsonContent = file_get_contents($assetsDir . DIRECTORY_SEPARATOR . 'assets.json');
 
-    $iterator = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($assetsDir, RecursiveDirectoryIterator::SKIP_DOTS),
-        RecursiveIteratorIterator::SELF_FIRST
-    );
+    if ($jsonContent === false) {
+        die("Error reading the assets JSON file.");
+    }
 
-    deleteFolder($distDir . DIRECTORY_SEPARATOR . 'css');
-    deleteFolder($distDir . DIRECTORY_SEPARATOR . 'js');
+    $assets = json_decode($jsonContent, true);
 
-    foreach ($iterator as $file) {
-        if ($file->isFile()) {
-            $relativePath = str_replace($assetsDir, '', $file->getPathname());
-            $outputFilePath = $distDir . $relativePath;
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        die("Error parsing JSON: " . json_last_error_msg());
+    }
+
+    $dirs = array_keys($assets);
+
+    foreach ($dirs as $dir) {
+        $destDir = $publicDir . DIRECTORY_SEPARATOR . $dir;
+        deleteFolder($destDir);
+
+        foreach ($assets[$dir] as $file) {
+            $originalFilePath = $assetsDir . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . $file;
+            $outputFilePath = $destDir . DIRECTORY_SEPARATOR . $file;
             $outputFilePathWithTimestamp = preg_replace('/(\.[^.]+)$/', "-$timestamp$1", $outputFilePath);
 
             if (!is_dir(dirname($outputFilePathWithTimestamp))) {
                 mkdir(dirname($outputFilePathWithTimestamp), 0777, true);
             }
 
-            copy($file->getPathname(), $outputFilePathWithTimestamp);
-            echo $file->getPathname() . ' -> ' . $outputFilePathWithTimestamp . PHP_EOL;
+            copy($originalFilePath, $outputFilePathWithTimestamp);
+            echo $originalFilePath . ' -> ' . $outputFilePathWithTimestamp . PHP_EOL;
         }
     }
 }
 
 function compilePages() {
-    global $distDir, $timestamp;
+    global $publicDir, $timestamp;
 
     $iterator = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator(__DIR__, RecursiveDirectoryIterator::SKIP_DOTS),
@@ -67,7 +75,7 @@ function compilePages() {
                 $output = shell_exec("TIMESTAMP={$timestamp} php {$indexPath}");
                 $relativePath = str_replace(__DIR__, '', $file->getPathname());
                 $relativePath = str_replace('/pages', '', $relativePath);
-                $outputFilePath = $distDir . $relativePath . DIRECTORY_SEPARATOR . 'index.html';
+                $outputFilePath = $publicDir . $relativePath . DIRECTORY_SEPARATOR . 'index.html';
 
                 if (!is_dir(dirname($outputFilePath))) {
                     mkdir(dirname($outputFilePath), 0777, true);
