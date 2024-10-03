@@ -4,10 +4,16 @@
     $description = isset($metaData['description']) ? $metaData['description'] : 'My Static Site';
 
     function getAsset(string $path) {
-        $isBuilding = getenv('IS_BUILDING');
+        $timestamp = getenv('TIMESTAMP');
 
-        // TODO: figure out the difference between built and not built assets
-        return $isBuilding ? "/{$path}" : "/assets/{$path}";
+        if (!isset($timestamp)) {
+            return "/assets/{$path}";
+        }
+
+        $fileParts = explode('.', $path);
+        $fileParts[0] = $fileParts[0] . '-' . $timestamp;
+        $newFile = implode('.', $fileParts);
+        return $newFile;
     }
 ?>
 <!DOCTYPE html>
@@ -24,7 +30,7 @@
     <meta name="description" content="<?=$description?>">
     <title><?= $title ?></title>
 
-    <link rel="stylesheet" href="<?=getAsset('css/main.css')?>" type="text/css">
+    <link rel="stylesheet" href="<?=getAsset('/css/main.css')?>" type="text/css">
 </head>
 <body>
     <nav>

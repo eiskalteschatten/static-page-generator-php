@@ -2,11 +2,12 @@
 
 $rootDir = __DIR__;
 $distDir = __DIR__ . DIRECTORY_SEPARATOR . 'public';
+$timestamp = time();
 
 // TODO: copy assets to the dist folder and add a unix timestamp to the file name. Also update the getAsset function to use the timestamp.
 
 function compilePages() {
-    global $rootDir, $distDir;
+    global $rootDir, $distDir, $timestamp;
 
     $iterator = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator($rootDir, RecursiveDirectoryIterator::SKIP_DOTS),
@@ -17,7 +18,7 @@ function compilePages() {
         if ($file->isDir()) {
             $indexPath = $file->getPathname() . DIRECTORY_SEPARATOR . 'index.php';
             if (file_exists($indexPath)) {
-                $output = shell_exec('IS_BUILDING=true php ' . $indexPath);
+                $output = shell_exec("TIMESTAMP={$timestamp} php {$indexPath}");
                 $relativePath = str_replace($rootDir, '', $file->getPathname());
                 $relativePath = str_replace('/pages', '', $relativePath);
                 $outputFilePath = $distDir . $relativePath . DIRECTORY_SEPARATOR . 'index.html';
