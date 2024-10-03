@@ -1,5 +1,4 @@
 <?php
-
 $publicDir = __DIR__ . DIRECTORY_SEPARATOR . 'public';
 $timestamp = time();
 
