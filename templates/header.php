@@ -2,6 +2,11 @@
     $defaultTitle = 'My Static Site';
     $title = isset($metaData['title']) ? "{$metaData['title']} - ${defaultTitle}" : $defaultTitle;
     $description = isset($metaData['description']) ? $metaData['description'] : 'My Static Site';
+
+    function getAsset(string $path) {
+        // TODO: figure out the difference between built and not built assets
+        return "/assets/{$path}";
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,5 +21,7 @@
     <meta name="color-scheme" content="light dark">
     <meta name="description" content="<?=$description?>">
     <title><?= $title ?></title>
+
+    <link rel="stylesheet" href="<?=getAsset('css/main.css')?>" type="text/css">
 </head>
 <body>
