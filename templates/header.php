@@ -30,7 +30,6 @@
     <meta name="description" content="<?=$description?>">
     <title><?= $title ?></title>
 
-    <!-- TODO: automate this based on the asset.json file -->
     <link rel="stylesheet" href="<?=getAsset('/css/main.css')?>" type="text/css">
 
     <script src="<?=getAsset('/js/scripts.js')?>" async></script>
