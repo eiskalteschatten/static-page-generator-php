@@ -21,6 +21,7 @@ function compilePages() {
                 include_once $indexPath;
                 $output = ob_get_clean();
                 $relativePath = str_replace($rootDir, '', $file->getPathname());
+                $relativePath = str_replace('/pages', '', $relativePath);
                 $outputFilePath = $distDir . $relativePath . DIRECTORY_SEPARATOR . 'index.html';
 
                 if (!is_dir(dirname($outputFilePath))) {
