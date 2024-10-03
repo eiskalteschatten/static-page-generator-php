@@ -6,8 +6,8 @@
     function getAsset(string $path) {
         $timestamp = getenv('TIMESTAMP');
 
-        if (!isset($timestamp)) {
-            return "/assets/{$path}";
+        if (!$timestamp) {
+            return "/assets{$path}";
         }
 
         $fileParts = explode('.', $path);
