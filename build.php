@@ -1,7 +1,7 @@
 <?php
 
 $rootDir = __DIR__;
-$distDir = __DIR__ . DIRECTORY_SEPARATOR . 'dist';
+$distDir = __DIR__ . DIRECTORY_SEPARATOR . 'public';
 
 // TODO: copy assets to the dist folder and add a unix timestamp to the file name. Also update the getAsset function to use the timestamp.
 
