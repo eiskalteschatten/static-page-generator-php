@@ -1,17 +1,49 @@
 <?php
 
-$rootDir = __DIR__;
 $distDir = __DIR__ . DIRECTORY_SEPARATOR . 'public';
 $timestamp = time();
 
-// TODO: copy assets to the dist folder and add a unix timestamp to the file name. Also update the getAsset function to use the timestamp.
-
-function compilePages() {
-    global $rootDir, $distDir, $timestamp;
+function copyAssets() {
+    global $distDir, $timestamp;
+    $assetsDir = __DIR__ . DIRECTORY_SEPARATOR . 'assets';
 
     $iterator = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($rootDir, RecursiveDirectoryIterator::SKIP_DOTS),
+        new RecursiveDirectoryIterator($assetsDir, RecursiveDirectoryIterator::SKIP_DOTS),
         RecursiveIteratorIterator::SELF_FIRST
+    );
+
+    $cssDir = $distDir . DIRECTORY_SEPARATOR . 'css';
+    if (is_dir($cssDir)) {
+        rmdir($cssDir);
+    }
+
+    $jsDir = $distDir . DIRECTORY_SEPARATOR . 'js';
+    if (is_dir($jsDir)) {
+        rmdir($jsDir);
+    }
+
+    foreach ($iterator as $file) {
+        if ($file->isFile()) {
+            $relativePath = str_replace($assetsDir, '', $file->getPathname());
+            $outputFilePath = $distDir . $relativePath;
+            $outputFilePathWithTimestamp = preg_replace('/(\.[^.]+)$/', "-$timestamp$1", $outputFilePath);
+
+            if (!is_dir(dirname($outputFilePathWithTimestamp))) {
+                mkdir(dirname($outputFilePathWithTimestamp), 0777, true);
+            }
+
+            copy($file->getPathname(), $outputFilePathWithTimestamp);
+            echo $file->getPathname() . ' -> ' . $outputFilePathWithTimestamp . PHP_EOL;
+        }
+    }
+}
+
+function compilePages() {
+    global $distDir, $timestamp;
+
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator(__DIR__, RecursiveDirectoryIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::CHILD_FIRST
     );
 
     foreach ($iterator as $file) {
@@ -19,7 +51,7 @@ function compilePages() {
             $indexPath = $file->getPathname() . DIRECTORY_SEPARATOR . 'index.php';
             if (file_exists($indexPath)) {
                 $output = shell_exec("TIMESTAMP={$timestamp} php {$indexPath}");
-                $relativePath = str_replace($rootDir, '', $file->getPathname());
+                $relativePath = str_replace(__DIR__, '', $file->getPathname());
                 $relativePath = str_replace('/pages', '', $relativePath);
                 $outputFilePath = $distDir . $relativePath . DIRECTORY_SEPARATOR . 'index.html';
 
@@ -34,4 +66,5 @@ function compilePages() {
     }
 }
 
+copyAssets();
 compilePages();
