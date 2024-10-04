@@ -1,6 +1,5 @@
 <?php
-    $root = realpath($_SERVER['DOCUMENT_ROOT']);
-    require_once "{$root}/functions.php";
+    require_once getenv('FUNCTIONS_PATH') ?: "../functions.php";
 
     getHeader([
         // 'title' => 'Home',
