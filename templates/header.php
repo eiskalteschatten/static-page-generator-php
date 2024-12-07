@@ -5,9 +5,10 @@
 
     function getAsset(string $path) {
         $timestamp = getenv('TIMESTAMP');
+        $devMode = getenv('DEV_MODE');
 
-        if (!$timestamp) {
-            return "/assets{$path}";
+        if (!$timestamp || $devMode === true) {
+            return "/_assets{$path}";
         }
 
         $fileParts = explode('.', $path);

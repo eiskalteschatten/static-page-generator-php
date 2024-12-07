@@ -25,7 +25,7 @@ function deleteFolder($folderPath) {
 
 function copyAssets() {
     global $publicDir, $timestamp;
-    $assetsDir = __DIR__ . DIRECTORY_SEPARATOR . 'assets';
+    $assetsDir = __DIR__ . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . '_assets';
     $jsonContent = file_get_contents($assetsDir . DIRECTORY_SEPARATOR . 'assets.json');
 
     if ($jsonContent === false) {
@@ -77,7 +77,7 @@ function compilePages() {
                 $output = shell_exec("php {$indexPath}");
 
                 $relativePath = str_replace(__DIR__, '', $file->getPathname());
-                $relativePath = str_replace('/pages', '', $relativePath);
+                $relativePath = str_replace('/src', '', $relativePath);
                 $outputFilePath = $publicDir . $relativePath . DIRECTORY_SEPARATOR . 'index.html';
 
                 if (!is_dir(dirname($outputFilePath))) {
