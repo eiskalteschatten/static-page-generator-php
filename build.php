@@ -90,6 +90,7 @@ function compilePages() {
             $baseFileName = $file->getBasename('.php');
 
             // Create the output path with .html extension
+            // If the base filename is "index", the output path should be the directory itself
             $outputDir = $baseFileName == "index" ? $publicDir . $relativePath : $publicDir . $relativePath . DIRECTORY_SEPARATOR . $baseFileName;
             $outputFilePath = $outputDir . DIRECTORY_SEPARATOR . 'index.html';
 
