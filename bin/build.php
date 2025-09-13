@@ -1,5 +1,5 @@
 <?php
-$publicDir = __DIR__ . DIRECTORY_SEPARATOR . 'public';
+$publicDir = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'public';
 $timestamp = time();
 
 function deleteFolder($folderPath) {
@@ -26,7 +26,7 @@ function deleteFolder($folderPath) {
 
 function copyAssets() {
     global $publicDir, $timestamp;
-    $assetsDir = __DIR__ . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . '_assets';
+    $assetsDir = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . '_assets';
     $jsonContent = file_get_contents($assetsDir . DIRECTORY_SEPARATOR . 'assets.json');
 
     if ($jsonContent === false) {
@@ -62,7 +62,7 @@ function copyAssets() {
 
 function compilePages() {
     global $publicDir, $timestamp;
-    $srcDir = __DIR__ . DIRECTORY_SEPARATOR . 'src';
+    $srcDir = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'src';
 
     $iterator = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator($srcDir, RecursiveDirectoryIterator::SKIP_DOTS),
@@ -78,8 +78,6 @@ function compilePages() {
                 continue;
             }
 
-            $functionsPath = realpath($_SERVER['DOCUMENT_ROOT']) . DIRECTORY_SEPARATOR . 'lib'  . DIRECTORY_SEPARATOR . 'functions.php';
-            putenv("FUNCTIONS_PATH={$functionsPath}");
             putenv("TIMESTAMP={$timestamp}");
             $output = shell_exec("php {$phpFilePath}");
 

@@ -1,4 +1,8 @@
 #!/bin/bash
 
+export ROOT_DIR="$(pwd)"
+export FUNCTIONS_FILE="${ROOT_DIR}/lib/functions.php"
+export DEV_MODE=true
+
 cd src
-DEV_MODE=true php -S localhost:8080
+php -S localhost:8080

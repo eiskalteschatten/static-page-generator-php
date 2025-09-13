@@ -1,5 +1,5 @@
 <?php
-    require_once getenv('FUNCTIONS_PATH') ?: "../../functions.php";
+    require_once getenv('FUNCTIONS_FILE');
 
     getHeader([
         'title' => 'About test',
