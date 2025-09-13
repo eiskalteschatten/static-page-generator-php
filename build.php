@@ -15,7 +15,8 @@ function deleteFolder($folderPath) {
     foreach ($iterator as $file) {
         if ($file->isDir()) {
             rmdir($file->getPathname());
-        } else {
+        }
+        else {
             unlink($file->getPathname());
         }
     }
@@ -61,32 +62,43 @@ function copyAssets() {
 
 function compilePages() {
     global $publicDir, $timestamp;
+    $srcDir = __DIR__ . DIRECTORY_SEPARATOR . 'src';
 
     $iterator = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator(__DIR__, RecursiveDirectoryIterator::SKIP_DOTS),
-        RecursiveIteratorIterator::CHILD_FIRST
+        new RecursiveDirectoryIterator($srcDir, RecursiveDirectoryIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::LEAVES_ONLY
     );
 
     foreach ($iterator as $file) {
-        if ($file->isDir()) {
-            $indexPath = $file->getPathname() . DIRECTORY_SEPARATOR . 'index.php';
-            if (file_exists($indexPath)) {
-                $functionsPath = realpath($_SERVER['DOCUMENT_ROOT']) . DIRECTORY_SEPARATOR . 'functions.php';
-                putenv("FUNCTIONS_PATH={$functionsPath}");
-                putenv("TIMESTAMP={$timestamp}");
-                $output = shell_exec("php {$indexPath}");
+        if ($file->isFile() && $file->getExtension() === 'php') {
+            $phpFilePath = $file->getPathname();
 
-                $relativePath = str_replace(__DIR__, '', $file->getPathname());
-                $relativePath = str_replace('/src', '', $relativePath);
-                $outputFilePath = $publicDir . $relativePath . DIRECTORY_SEPARATOR . 'index.html';
-
-                if (!is_dir(dirname($outputFilePath))) {
-                    mkdir(dirname($outputFilePath), 0777, true);
-                }
-
-                file_put_contents($outputFilePath, $output);
-                echo $indexPath . ' -> ' . $outputFilePath . PHP_EOL;
+            // Skip files in the _assets directory
+            if (strpos($phpFilePath, DIRECTORY_SEPARATOR . '_assets' . DIRECTORY_SEPARATOR) !== false) {
+                continue;
             }
+
+            $functionsPath = realpath($_SERVER['DOCUMENT_ROOT']) . DIRECTORY_SEPARATOR . 'functions.php';
+            putenv("FUNCTIONS_PATH={$functionsPath}");
+            putenv("TIMESTAMP={$timestamp}");
+            $output = shell_exec("php {$phpFilePath}");
+
+            // Calculate the relative path from src directory
+            $relativePath = str_replace($srcDir, '', dirname($phpFilePath));
+
+            // Get the base filename without extension
+            $baseFileName = $file->getBasename('.php');
+
+            // Create the output path with .html extension
+            $outputDir = $publicDir . $relativePath;
+            $outputFilePath = $outputDir . DIRECTORY_SEPARATOR . $baseFileName . '.html';
+
+            if (!is_dir($outputDir)) {
+                mkdir($outputDir, 0777, true);
+            }
+
+            file_put_contents($outputFilePath, $output);
+            echo $phpFilePath . ' -> ' . $outputFilePath . PHP_EOL;
         }
     }
 }
