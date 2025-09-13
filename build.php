@@ -78,7 +78,7 @@ function compilePages() {
                 continue;
             }
 
-            $functionsPath = realpath($_SERVER['DOCUMENT_ROOT']) . DIRECTORY_SEPARATOR . 'functions.php';
+            $functionsPath = realpath($_SERVER['DOCUMENT_ROOT']) . DIRECTORY_SEPARATOR . 'lib'  . DIRECTORY_SEPARATOR . 'functions.php';
             putenv("FUNCTIONS_PATH={$functionsPath}");
             putenv("TIMESTAMP={$timestamp}");
             $output = shell_exec("php {$phpFilePath}");
